@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"time"
 
 	"github.com/FadyGamilM/side_working/handlers"
 )
@@ -25,8 +28,35 @@ func main() {
 
 	log.Println("Server is up and running on port 9090")
 
+	// create a server to tune some paramters
+	server := &http.Server{
+		Addr:         "localhost:9090",
+		Handler:      customServeMux,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		// listen and serve using the created server instance
+		err := server.ListenAndServe()
+		if err != nil {
+			logger.Fatal(err)
+		}
+	}()
+
+	// setup the gracefull shutdown for reliability service
+	signalChannel := make(chan os.Signal)
+	signal.Notify(signalChannel, os.Interrupt)
+	signal.Notify(signalChannel, os.Kill)
+	// the program will block untill a ctrl+c or any interrupt signal is happen so we can read it from the channel
+	ReceivedSignal := <-signalChannel
+	logger.Printf("Main Program exits via a graceful shutdon due to a signal -> ` %s ` has been received", ReceivedSignal)
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	server.Shutdown(ctx)
+
 	// listen to a port 9090 and assign the custom serve mux
-	http.ListenAndServe("localhost:9090", customServeMux)
+	// http.ListenAndServe("localhost:9090", customServeMux)
 }
 
 /**
