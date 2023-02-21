@@ -7,19 +7,22 @@ import (
 	"os"
 
 	"github.com/FadyGamilM/product_api/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	// instantiate my serve mux
-	serveMux := http.NewServeMux()
+	serveMux := mux.NewRouter()
 
 	// get the handler method and inject the logger
 	logger := log.New(os.Stdout, "[Product_API] => ", log.LstdFlags)
 	productHandler := handlers.NewProduct(logger)
 
-	// register the handler to the pattern
-	serveMux.Handle("/products", productHandler)
+	GET_Router := serveMux.Methods(http.MethodGet).Subrouter()
+	GET_Router.HandleFunc("/api/products", productHandler.Get)
 
+	PUT_Router := serveMux.Methods(http.MethodPut).Subrouter()
+	PUT_Router.Handle("/api/products/{id:[0:9]+}", productHandler.Put)
 	// construct a server
 	server := http.Server{
 		Addr:    "localhost:9090",

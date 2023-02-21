@@ -38,3 +38,6 @@ func (handler *Product) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (handler *Product) Put(w http.ResponseWriter, r *http.Request) {
+}

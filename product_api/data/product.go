@@ -19,8 +19,23 @@ type Product struct {
 
 type Products []*Product
 
+func GetProducts() []*Product {
+	return ProductList
+}
+
+func AddProduct(product *Product) {
+	product.ID = ProductList[len(ProductList)-1].ID + 1
+	ProductList = append(ProductList, product)
+}
+
+// a method that extract json data format from the given data type [Products]
 func (products *Products) ToJson(w io.Writer) error {
 	return json.NewEncoder(w).Encode(products)
+}
+
+// a method extract the Product data format fromt he json format
+func (product *Product) FromJson(r io.Reader) error {
+	return json.NewDecoder(r).Decode(&product)
 }
 
 // memic the database
