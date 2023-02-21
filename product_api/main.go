@@ -22,7 +22,8 @@ func main() {
 	GET_Router.HandleFunc("/api/products", productHandler.Get)
 
 	PUT_Router := serveMux.Methods(http.MethodPut).Subrouter()
-	PUT_Router.Handle("/api/products/{id:[0:9]+}", productHandler.Put)
+	PUT_Router.HandleFunc("/api/products/{id}", productHandler.Put)
+
 	// construct a server
 	server := http.Server{
 		Addr:    "localhost:9090",
