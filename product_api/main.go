@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/FadyGamilM/product_api/middlewares"
+
 	"github.com/FadyGamilM/product_api/handlers"
 	"github.com/gorilla/mux"
 )
@@ -22,7 +24,9 @@ func main() {
 	GET_Router.HandleFunc("/api/products", productHandler.Get)
 
 	PUT_Router := serveMux.Methods(http.MethodPut).Subrouter()
-	PUT_Router.Handle("/api/products/{id:[0:9]+}", productHandler.Put)
+	PUT_Router.HandleFunc("/api/products/{id}", productHandler.Put)
+	PUT_Router.Use((middlewares.RequestValidator))
+
 	// construct a server
 	server := http.Server{
 		Addr:    "localhost:9090",

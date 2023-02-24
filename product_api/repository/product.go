@@ -18,10 +18,9 @@ func AddProduct(product *data.Product) {
 func UpdateProduct(productID int, newProduct *data.Product) error {
 	for idx, prod := range data.ProductList {
 		if prod.ID == productID {
-			data.ProductList = append(data.ProductList[:idx], data.ProductList[idx+1:]...)
-			newID := data.ProductList[len(data.ProductList)].ID + 1
-			newProduct.ID = newID
-			data.ProductList = append(data.ProductList, newProduct)
+			// data.ProductList = append(data.ProductList[:idx], data.ProductList[idx+1:]...)
+			newProduct.ID = productID
+			data.ProductList[idx] = newProduct
 			return nil
 		}
 	}
